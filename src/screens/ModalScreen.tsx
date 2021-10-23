@@ -3,7 +3,7 @@ import { Center, Text } from 'native-base';
 
 type Props = {};
 
-export const ModalScreen: React.FC<Props> = ({}) => {
+export const ModalScreen: React.FC<Props> = ({}: Props) => {
   return (
     <Center flex={1}>
       <Text>ModalScreen</Text>
