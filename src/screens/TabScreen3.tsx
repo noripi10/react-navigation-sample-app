@@ -1,12 +1,23 @@
 import React from 'react';
-import { Center, Text } from 'native-base';
+import { Box, Center, Text } from 'native-base';
 
 type Props = {};
 
 export const TabScreen3: React.FC<Props> = ({}) => {
   return (
-    <Center flex={1}>
-      <Text>TabScreen3</Text>
-    </Center>
+    <Box
+      flex={1}
+      bg={{
+        linearGradient: {
+          colors: ['red.600', 'red.300'],
+          start: [0, 0],
+          end: [1, 1],
+        },
+      }}
+    >
+      <Center flex={1}>
+        <Text>TabScreen3</Text>
+      </Center>
+    </Box>
   );
 };
