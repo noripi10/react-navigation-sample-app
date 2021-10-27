@@ -1,1 +1,1 @@
-![キャプチャー１](captures/capture1.png)
+![キャプチャー１](captures/capture2.png)
