@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Dimensions } from 'react-native';
 import { Box, Button, HStack, VStack, Heading } from 'native-base';
 import { Circle, Svg } from 'react-native-svg';
@@ -19,7 +19,14 @@ type Props = {
 // }
 
 export const TabScreen1: React.FC<Props> = ({ navigation }: Props) => {
+  const [mouted, setMounted] = useState(false);
   const { width, height } = Dimensions.get('screen');
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   return (
     <Box
       flex={1}
@@ -33,11 +40,13 @@ export const TabScreen1: React.FC<Props> = ({ navigation }: Props) => {
     >
       <VStack flex={1} alignItems='center' safeAreaTop>
         <Heading>TabScreen1</Heading>
-        <SvgUri
-          source={require('../../assets/images/undraw_react_y7wq.svg')}
-          width={width * 0.7}
-          height={height * 0.3}
-        />
+        {mouted && (
+          <SvgUri
+            source={require('../../assets/images/undraw_react_y7wq.svg')}
+            width={width * 0.7}
+            height={height * 0.3}
+          />
+        )}
 
         <Svg width={width * 0.9} height={100} viewBox={`0 0 ${width * 0.9} 100`}>
           <Circle cx='10' cy='10' r='5' stroke='#500' strokeWidth='2' fill='#800' onPress={() => Alert.alert('1')} />

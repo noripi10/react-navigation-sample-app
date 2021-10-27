@@ -1,9 +1,11 @@
 import React from 'react';
-import { Box, Center, Text } from 'native-base';
+import { Box, Button, Center, ScrollView, Text, VStack } from 'native-base';
+import { useFirebase } from '../hooks/useFirebase';
 
 type Props = {};
 
 export const TabScreen4: React.FC<Props> = ({}) => {
+  const { logined, currentUser, loginWithEmailPassword, logout } = useFirebase();
   return (
     <Box
       flex={1}
@@ -15,9 +17,20 @@ export const TabScreen4: React.FC<Props> = ({}) => {
         },
       }}
     >
-      <Center flex={1}>
-        <Text>TabScreen4</Text>
-      </Center>
+      <VStack safeArea flex={1}>
+        <ScrollView>
+          <Center px={1}>
+            <Text>TabScreen4</Text>
+            <Text>{logined ? 'login' : 'not login'}</Text>
+            {logined ? (
+              <Button onPress={logout}>logout</Button>
+            ) : (
+              <Button onPress={() => loginWithEmailPassword('hrnr1177@yahoo.co.jp', '62486248hs')}>login</Button>
+            )}
+            <Text>{JSON.stringify(currentUser, null, 2)}</Text>
+          </Center>
+        </ScrollView>
+      </VStack>
     </Box>
   );
 };
