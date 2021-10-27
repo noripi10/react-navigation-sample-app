@@ -38,16 +38,7 @@ export const BottomNavigator = () => {
           return (
             <Center top={Platform.select({ ios: 3, android: 0 })}>
               {route.name === 'Modal' ? (
-                <Center
-                  position='absolute'
-                  top={-48}
-                  w={75}
-                  h={75}
-                  borderRadius={75 / 2}
-                  bgColor='amber.400'
-                  ml={2}
-                  mr={2}
-                >
+                <Center position='absolute' top={-48} w={75} h={75} borderRadius={999} bgColor='amber.400'>
                   <Feather name={name} color={color} size={size * 1.3} />
                 </Center>
               ) : (
@@ -97,6 +88,7 @@ export const BottomNavigator = () => {
         },
         tabBarActiveTintColor: '#991b1b',
         tabBarInactiveTintColor: '#78716c',
+        headerShown: false,
       })}
     >
       <Tab.Screen name='Tab1' component={TabScreen1} />
