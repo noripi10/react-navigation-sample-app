@@ -1,11 +1,20 @@
-import React from 'react';
-import { Box, Button, Center, ScrollView, Text, VStack } from 'native-base';
-import { useFirebase } from '../hooks/useFirebase';
+import React, { useCallback, useContext, useState } from 'react';
+import { Box, Button, Center, HStack, ScrollView, Text, VStack } from 'native-base';
+import { useFirebase, User } from '../hooks/useFirebase';
+import { AuthUserContext } from '../../AppContext';
 
 type Props = {};
 
 export const TabScreen4: React.FC<Props> = ({}) => {
-  const { logined, currentUser, loginWithEmailPassword, logout } = useFirebase();
+  const { user: currentUser } = useContext(AuthUserContext);
+  const { getUsersCollection, setRoom } = useFirebase();
+  const [users, setUsers] = useState<User[] | null>(null);
+
+  const getUsers = useCallback(async () => {
+    const users = await getUsersCollection();
+    setUsers(users);
+  }, []);
+
   return (
     <Box
       flex={1}
@@ -21,13 +30,31 @@ export const TabScreen4: React.FC<Props> = ({}) => {
         <ScrollView>
           <Center px={1}>
             <Text>TabScreen4</Text>
-            <Text>{logined ? 'login' : 'not login'}</Text>
-            {logined ? (
-              <Button onPress={logout}>logout</Button>
-            ) : (
-              <Button onPress={() => loginWithEmailPassword('hrnr1177@yahoo.co.jp', '62486248hs')}>login</Button>
-            )}
-            <Text>{JSON.stringify(currentUser, null, 2)}</Text>
+            <HStack width='100%' justifyContent='center'>
+              <Button ml='1' onPress={getUsers}>
+                Get Users
+              </Button>
+
+              <Button ml='1' onPress={setRoom}>
+                Set Room
+              </Button>
+            </HStack>
+            <VStack width='100%' alignItems='center' mt={2}>
+              <Text>Login User</Text>
+              <Text>
+                {currentUser && currentUser.email}
+                {'\n'}
+                {currentUser && currentUser.uid}
+              </Text>
+            </VStack>
+            <VStack width='100%' alignItems='center' mt={2}>
+              <Text>Users</Text>
+              {users?.map((user) => (
+                <Text>
+                  {user.id} {user.name}
+                </Text>
+              ))}
+            </VStack>
           </Center>
         </ScrollView>
       </VStack>

@@ -1,8 +1,10 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { INativebaseConfig, NativeBaseProvider } from 'native-base';
-import { Router } from './src/navigation/Router';
 import { LinearGradient } from 'expo-linear-gradient';
+
+import { AuthUserProvider } from './AppContext';
+import { Router } from './src/navigation/Router';
 
 const config: INativebaseConfig = {
   dependencies: {
@@ -13,7 +15,9 @@ const config: INativebaseConfig = {
 export default function App() {
   return (
     <NativeBaseProvider config={config}>
-      <Router />
+      <AuthUserProvider>
+        <Router />
+      </AuthUserProvider>
       <StatusBar style='auto' />
     </NativeBaseProvider>
   );

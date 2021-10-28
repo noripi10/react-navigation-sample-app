@@ -40,13 +40,13 @@ export const TabScreen1: React.FC<Props> = ({ navigation }: Props) => {
     >
       <VStack flex={1} alignItems='center' safeAreaTop>
         <Heading>TabScreen1</Heading>
-        {mouted && (
+        {/* {mouted && (
           <SvgUri
             source={require('../../assets/images/undraw_react_y7wq.svg')}
             width={width * 0.7}
             height={height * 0.3}
           />
-        )}
+        )} */}
 
         <Svg width={width * 0.9} height={100} viewBox={`0 0 ${width * 0.9} 100`}>
           <Circle cx='10' cy='10' r='5' stroke='#500' strokeWidth='2' fill='#800' onPress={() => Alert.alert('1')} />
