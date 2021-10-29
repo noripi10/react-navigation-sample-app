@@ -19,11 +19,10 @@ export const AuthUserProvider: React.VFC<Props> = ({ children }) => {
   const [user, setUser] = useState<firebase.User | null>(null);
   useEffect(() => {
     Storage.getAllKeys().then((s) => console.log('strage kyes', s));
-  });
+  }, []);
 
   useEffect(() => {
     const subscription = auth.onAuthStateChanged((user) => {
-      console.log('user change', user);
       if (!!user) {
         setUser(user);
       } else {
@@ -32,7 +31,7 @@ export const AuthUserProvider: React.VFC<Props> = ({ children }) => {
     });
 
     return subscription;
-  });
+  }, []);
 
   return <AuthUserContext.Provider value={{ user, setUser }}>{children}</AuthUserContext.Provider>;
 };

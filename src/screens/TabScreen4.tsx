@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react';
-import { Box, Button, Center, Heading, HStack, ScrollView, Text, VStack } from 'native-base';
+import { Box, Button, Center, FlatList, Heading, HStack, ScrollView, Stack, Text, VStack } from 'native-base';
 import { useFirebase, User } from '../hooks/useFirebase';
 
 import { AuthUserContext } from '../contexts/AuthContext';
@@ -52,16 +52,20 @@ export const TabScreen4: React.FC<Props> = ({}) => {
                 {currentUser && currentUser.uid}
               </Text>
             </VStack>
-            <VStack width='100%' alignItems='center' mt={2}>
-              <Text>Users</Text>
-              {users?.map((user) => (
-                <Text>
-                  {user.id} {user.name}
-                </Text>
-              ))}
-            </VStack>
           </Center>
         </ScrollView>
+        <VStack flex={5} width='100%' alignItems='center' mt={2}>
+          <Text>Users</Text>
+          <FlatList
+            data={users}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item, index }) => (
+              <Stack>
+                <Text>{`${item.id} ${item.name}`}</Text>
+              </Stack>
+            )}
+          />
+        </VStack>
       </VStack>
     </Box>
   );

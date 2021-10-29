@@ -41,6 +41,16 @@ export const useFirebase = () => {
     }
   }, []);
 
+  const loginFacebook = async () => {
+    const credential = firebase.auth.FacebookAuthProvider.credential('');
+    await auth.signInWithCredential(credential);
+  };
+
+  const loginGoogle = async () => {
+    const credential = firebase.auth.GoogleAuthProvider.credential('', '');
+    await auth.signInWithCredential(credential);
+  };
+
   const logout = useCallback(async () => {
     await auth.signOut();
   }, []);
@@ -52,16 +62,12 @@ export const useFirebase = () => {
       return { ...doc.data(), id: doc.id } as User;
     });
 
-    querySnapshot.forEach((doc) => {
-      console.log(doc.id);
-    });
-    console.log({ users, length: users.length });
     return users;
   }, []);
 
   const setRoom = useCallback(async () => {
-    const roomsRef = db.collection('users').doc();
-    await roomsRef.set({ name: 'hoge' });
+    const roomsRef = db.collection('rooms').doc();
+    await roomsRef.set({ roomName: 'hoge' });
   }, []);
 
   return { loginWithEmailPassword, logout, getUsersCollection, setRoom };

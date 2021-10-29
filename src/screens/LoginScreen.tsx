@@ -1,17 +1,29 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Box, Button, Center, Divider, Input, Stack, Text, VStack } from 'native-base';
 import { useFirebase } from '../hooks/useFirebase';
+import Storage from '@react-native-async-storage/async-storage';
 
 type Props = {};
 
 export const LoginScreen: React.FC<Props> = ({}) => {
   const { loginWithEmailPassword } = useFirebase();
-  const [userId, setUserId] = useState('hrnr1177@yahoo.co.jp');
-  const [password, setPassword] = useState('62486248hs');
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
 
-  const onLogin = useCallback(async () => {
-    console.log(userId, password);
-    await loginWithEmailPassword(userId, password);
+  const onLogin = useCallback(() => {
+    loginWithEmailPassword(userId, password).then(() => {
+      Storage.setItem('user', JSON.stringify({ userId, password }));
+    });
+  }, [userId, password]);
+
+  useEffect(() => {
+    Storage.getItem('user').then((str) => {
+      if (str) {
+        const user = JSON.parse(str);
+        setUserId(user.userId);
+        setPassword(user.password);
+      }
+    });
   }, []);
 
   return (
