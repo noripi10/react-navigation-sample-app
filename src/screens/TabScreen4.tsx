@@ -1,13 +1,14 @@
 import React, { useCallback, useContext, useState } from 'react';
-import { Box, Button, Center, HStack, ScrollView, Text, VStack } from 'native-base';
+import { Box, Button, Center, Heading, HStack, ScrollView, Text, VStack } from 'native-base';
 import { useFirebase, User } from '../hooks/useFirebase';
-import { AuthUserContext } from '../../AppContext';
+
+import { AuthUserContext } from '../contexts/AuthContext';
 
 type Props = {};
 
 export const TabScreen4: React.FC<Props> = ({}) => {
   const { user: currentUser } = useContext(AuthUserContext);
-  const { getUsersCollection, setRoom } = useFirebase();
+  const { getUsersCollection, setRoom, logout } = useFirebase();
   const [users, setUsers] = useState<User[] | null>(null);
 
   const getUsers = useCallback(async () => {
@@ -29,7 +30,7 @@ export const TabScreen4: React.FC<Props> = ({}) => {
       <VStack safeArea flex={1}>
         <ScrollView>
           <Center px={1}>
-            <Text>TabScreen4</Text>
+            <Heading>TabScreen4</Heading>
             <HStack width='100%' justifyContent='center'>
               <Button ml='1' onPress={getUsers}>
                 Get Users
@@ -37,6 +38,10 @@ export const TabScreen4: React.FC<Props> = ({}) => {
 
               <Button ml='1' onPress={setRoom}>
                 Set Room
+              </Button>
+
+              <Button ml='1' onPress={logout}>
+                Logout
               </Button>
             </HStack>
             <VStack width='100%' alignItems='center' mt={2}>

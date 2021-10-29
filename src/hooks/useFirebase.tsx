@@ -16,21 +16,21 @@ export const useFirebase = () => {
   const loginWithEmailPassword = useCallback(async (email: string, password: string) => {
     try {
       await auth.signInWithEmailAndPassword(email, password);
-      auth
-        .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-        .then(() => {
-          // Existing and future Auth states are now persisted in the current
-          // session only. Closing the window would clear any existing state even
-          // if a user forgets to sign out.
-          // ...
-          // New sign-in will be persisted with session persistence.
-          return firebase.auth().signInWithEmailAndPassword(email, password);
-        })
-        .catch((error) => {
-          // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
-        });
+      // auth
+      //   .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      //   .then(() => {
+      //     // Existing and future Auth states are now persisted in the current
+      //     // session only. Closing the window would clear any existing state even
+      //     // if a user forgets to sign out.
+      //     // ...
+      //     // New sign-in will be persisted with session persistence.
+      //     return firebase.auth().signInWithEmailAndPassword(email, password);
+      //   })
+      //   .catch((error) => {
+      //     // Handle Errors here.
+      //     var errorCode = error.code;
+      //     var errorMessage = error.message;
+      //   });
     } catch (e) {
       if (e instanceof Error) {
         Alert.alert(e.message);
@@ -41,8 +41,8 @@ export const useFirebase = () => {
     }
   }, []);
 
-  const logout = useCallback(() => {
-    auth.signOut();
+  const logout = useCallback(async () => {
+    await auth.signOut();
   }, []);
 
   const getUsersCollection = useCallback(async () => {

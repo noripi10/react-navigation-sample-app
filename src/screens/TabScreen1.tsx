@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Dimensions } from 'react-native';
-import { Box, Button, HStack, VStack, Heading } from 'native-base';
+import { Box, Button, HStack, VStack, Heading, Spinner, Center, Image, Stack } from 'native-base';
 import { Circle, Svg } from 'react-native-svg';
-import SvgUri from 'react-native-svg-uri';
+import { useAssets } from 'expo-asset';
+// import SvgUri from 'react-native-svg-uri';
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParamList } from '../navigation/StackNavigator';
@@ -19,13 +20,16 @@ type Props = {
 // }
 
 export const TabScreen1: React.FC<Props> = ({ navigation }: Props) => {
-  const [mouted, setMounted] = useState(false);
+  const assets = useAssets([require('../../assets/images/undraw_react_y7wq.png')]);
   const { width, height } = Dimensions.get('screen');
 
-  useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
+  if (!assets) {
+    return (
+      <Center flex={1}>
+        <Spinner accessibilityLabel='Loading now...' size='lg' color='indigo.500' />
+      </Center>
+    );
+  }
 
   return (
     <Box
@@ -40,13 +44,9 @@ export const TabScreen1: React.FC<Props> = ({ navigation }: Props) => {
     >
       <VStack flex={1} alignItems='center' safeAreaTop>
         <Heading>TabScreen1</Heading>
-        {/* {mouted && (
-          <SvgUri
-            source={require('../../assets/images/undraw_react_y7wq.svg')}
-            width={width * 0.7}
-            height={height * 0.3}
-          />
-        )} */}
+        <Stack width={'100%'} height={'35%'} p={4}>
+          <Image flex={1} source={require('../../assets/images/undraw_react_y7wq.png')} alt='logo' resizeMode='cover' />
+        </Stack>
 
         <Svg width={width * 0.9} height={100} viewBox={`0 0 ${width * 0.9} 100`}>
           <Circle cx='10' cy='10' r='5' stroke='#500' strokeWidth='2' fill='#800' onPress={() => Alert.alert('1')} />
@@ -56,14 +56,16 @@ export const TabScreen1: React.FC<Props> = ({ navigation }: Props) => {
           <Circle cx='70' cy='10' r='5' stroke='#829' strokeWidth='2' fill='#15d' onPress={() => Alert.alert('5')} />
         </Svg>
 
-        <HStack w='100%' justifyContent='center'>
-          <Button mr={2} onPress={() => navigation.navigate('Tabs', { screen: 'Tab4' })} borderRadius={999}>
-            Cafe !
-          </Button>
-          <Button onPress={() => navigation.navigate('FullModal')} borderRadius={999}>
-            Modal Camera Open!
-          </Button>
-        </HStack>
+        <Stack justifyContent='center' alignItems='center' flexDirection='row'>
+          <>
+            <Button mr={2} onPress={() => navigation.navigate('Tabs', { screen: 'Tab4' })} borderRadius={999}>
+              Cafe !
+            </Button>
+            <Button onPress={() => navigation.navigate('FullModal')} borderRadius={999}>
+              Modal Camera Open!
+            </Button>
+          </>
+        </Stack>
       </VStack>
     </Box>
   );
