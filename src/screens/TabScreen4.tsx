@@ -7,8 +7,8 @@ import { AuthUserContext } from '../contexts/AuthContext';
 type Props = {};
 
 export const TabScreen4: React.FC<Props> = ({}) => {
-  const { user: currentUser } = useContext(AuthUserContext);
   const { getUsersCollection, setRoom, logout } = useFirebase();
+  const { user: currentUser } = useContext(AuthUserContext);
   const [users, setUsers] = useState<User[] | null>(null);
 
   const getUsers = useCallback(async () => {

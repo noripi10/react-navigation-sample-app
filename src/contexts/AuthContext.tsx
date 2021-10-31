@@ -1,12 +1,13 @@
 import React, { createContext, Dispatch, SetStateAction, useState, useEffect } from 'react';
-import firebase from '../libs/firebase';
 import Storage from '@react-native-async-storage/async-storage';
 
-import { auth } from '../libs/firebase';
+import { firebaseApp } from '../libs/firebase';
+import { User, onAuthStateChanged } from 'firebase/auth';
+import { useFirebase } from '../hooks/useFirebase';
 
 type AuthUserContextProps = {
-  user: firebase.User | null;
-  setUser: Dispatch<SetStateAction<firebase.User | null>>;
+  user: User | null;
+  setUser: Dispatch<SetStateAction<User | null>>;
 };
 
 type Props = {
@@ -16,13 +17,14 @@ type Props = {
 export const AuthUserContext = createContext<AuthUserContextProps>({} as AuthUserContextProps);
 
 export const AuthUserProvider: React.VFC<Props> = ({ children }) => {
-  const [user, setUser] = useState<firebase.User | null>(null);
+  const { auth } = useFirebase();
+  const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     Storage.getAllKeys().then((s) => console.log('strage kyes', s));
   }, []);
 
   useEffect(() => {
-    const subscription = auth.onAuthStateChanged((user) => {
+    const subscription = onAuthStateChanged(auth, (user) => {
       if (!!user) {
         setUser(user);
       } else {

@@ -1,3 +1,6 @@
 {
-  "extends": "@react-native-community"
+  "extends": "@react-native-community",
+  "rules": {
+    "no-console": ["error", { "allow": ["info", "warn", "error"] }]
+  }
 }

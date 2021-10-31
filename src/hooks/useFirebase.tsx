@@ -1,21 +1,35 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
-import firebase, { auth, db } from '../libs/firebase';
-// import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-// import { collection, getDocs, Timestamp, doc, setDoc } from 'firebase/firestore';
+// v8 or v0 compat
+// import firebase, { auth, db } from '../libs/firebase';
+
+import { firebaseApp } from '../libs/firebase';
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithCredential,
+  signOut,
+  FacebookAuthProvider,
+  GoogleAuthProvider,
+} from 'firebase/auth';
+import { getFirestore, collection, query, getDocs, Timestamp, addDoc } from 'firebase/firestore';
 
 export interface User {
   id: string;
   name?: string;
-  createDate?: firebase.firestore.Timestamp;
-  updateDate?: firebase.firestore.Timestamp;
+  createDate?: Timestamp;
+  updateDate?: Timestamp;
 }
 
 export const useFirebase = () => {
+  const auth = getAuth(firebaseApp);
+  const db = getFirestore(firebaseApp);
+
   const loginWithEmailPassword = useCallback(async (email: string, password: string) => {
     try {
-      await auth.signInWithEmailAndPassword(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       // auth
       //   .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       //   .then(() => {
@@ -42,13 +56,13 @@ export const useFirebase = () => {
   }, []);
 
   const loginFacebook = async () => {
-    const credential = firebase.auth.FacebookAuthProvider.credential('');
-    await auth.signInWithCredential(credential);
+    const credential = FacebookAuthProvider.credential('');
+    await signInWithCredential(auth, credential);
   };
 
   const loginGoogle = async () => {
-    const credential = firebase.auth.GoogleAuthProvider.credential('', '');
-    await auth.signInWithCredential(credential);
+    const credential = GoogleAuthProvider.credential('', '');
+    await signInWithCredential(auth, credential);
   };
 
   const logout = useCallback(async () => {
@@ -57,7 +71,9 @@ export const useFirebase = () => {
 
   const getUsersCollection = useCallback(async () => {
     // const usersRef = collection(db, 'users');
-    const querySnapshot = await db.collection('users').get();
+    const _query = query(collection(db, 'users'));
+    const querySnapshot = await getDocs(_query);
+
     const users = querySnapshot.docs.map((doc) => {
       return { ...doc.data(), id: doc.id } as User;
     });
@@ -66,9 +82,10 @@ export const useFirebase = () => {
   }, []);
 
   const setRoom = useCallback(async () => {
-    const roomsRef = db.collection('rooms').doc();
-    await roomsRef.set({ roomName: 'hoge' });
+    const roomsRef = collection(db, 'rooms');
+    const roomRef = await addDoc(roomsRef, { name: 'huge' });
+    console.log(roomRef);
   }, []);
 
-  return { loginWithEmailPassword, logout, getUsersCollection, setRoom };
+  return { auth, db, loginWithEmailPassword, logout, getUsersCollection, setRoom };
 };

@@ -44,8 +44,15 @@ export const TabScreen1: React.FC<Props> = ({ navigation }: Props) => {
     >
       <VStack flex={1} alignItems='center' safeAreaTop>
         <Heading>TabScreen1</Heading>
-        <Stack width={'100%'} height={'35%'} p={4}>
-          <Image flex={1} source={require('../../assets/images/undraw_react_y7wq.png')} alt='logo' resizeMode='cover' />
+        <Stack width={'100%'} height={'35%'} p={4} justifyContent='center' alignItems='center'>
+          <Image
+            borderRadius={8}
+            width={Dimensions.get('window').width * 0.85}
+            height={Dimensions.get('window').height * 0.3}
+            source={require('../../assets/images/undraw_react_y7wq.png')}
+            alt='logo'
+            resizeMode='cover'
+          />
         </Stack>
 
         <Svg width={width * 0.9} height={100} viewBox={`0 0 ${width * 0.9} 100`}>
