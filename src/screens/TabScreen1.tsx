@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Dimensions } from 'react-native';
-import { Box, Button, HStack, VStack, Heading } from 'native-base';
+import { Alert, Dimensions, Platform, View } from 'react-native';
+import { Box, Button, HStack, VStack, Heading, useBreakpointValue, Text } from 'native-base';
 import { Circle, Svg } from 'react-native-svg';
 import SvgUri from 'react-native-svg-uri';
 
@@ -21,7 +21,8 @@ type Props = {
 export const TabScreen1: React.FC<Props> = ({ navigation }: Props) => {
   const [mouted, setMounted] = useState(false);
   const { width, height } = Dimensions.get('screen');
-
+  const flexDir = useBreakpointValue({ base: 'column', lg: 'row' });
+  const display = useBreakpointValue({ base: 'none', lg: 'flex' });
   useEffect(() => {
     setMounted(true);
     return () => setMounted(false);
@@ -37,6 +38,7 @@ export const TabScreen1: React.FC<Props> = ({ navigation }: Props) => {
           end: [1, 1],
         },
       }}
+      flexDirection={flexDir}
     >
       <VStack flex={1} alignItems='center' safeAreaTop>
         <Heading>TabScreen1</Heading>
@@ -64,6 +66,16 @@ export const TabScreen1: React.FC<Props> = ({ navigation }: Props) => {
             Modal Camera Open!
           </Button>
         </HStack>
+        <View
+          onLayout={(e) => {
+            console.info(e.nativeEvent.layout);
+          }}
+        >
+          <Text>{flexDir}</Text>
+        </View>
+      </VStack>
+      <VStack display={display} flex={2} flexDirection={flexDir}>
+        <Box flex={1} bgColor={'purple.900'} />
       </VStack>
     </Box>
   );

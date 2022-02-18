@@ -36,7 +36,7 @@ export const BottomNavigator = () => {
               : 'camera';
 
           return (
-            <Center top={Platform.select({ ios: 3, android: 0 })}>
+            <Center top={Platform.select({ ios: 0, android: 0 })}>
               {route.name === 'Modal' ? (
                 <Center position='absolute' top={-48} w={75} h={75} borderRadius={999} bgColor='amber.400'>
                   <Feather name={name} color={color} size={size * 1.3} />
@@ -45,6 +45,7 @@ export const BottomNavigator = () => {
                 <Feather name={name} color={color} size={size} />
               )}
             </Center>
+            // <Feather name={name} color={color} size={size} />
           );
         },
         tabBarButton: (props: BottomTabBarButtonProps) => {
@@ -64,7 +65,7 @@ export const BottomNavigator = () => {
               ? 'CAFE'
               : '';
           return (
-            <Center position='absolute' bottom={Platform.select({ ios: -30, android: 0 })} mb={1}>
+            <Center position='absolute' bottom={Platform.select({ ios: 0, android: 0 })} mb={1}>
               <Text color={props.focused ? 'red.800' : 'warmGray.500'} fontSize={11}>
                 {name}
               </Text>
