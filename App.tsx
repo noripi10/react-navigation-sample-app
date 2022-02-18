@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { INativebaseConfig, NativeBaseProvider } from 'native-base';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { AuthProvider } from './src/context/AuthUserContext';
+import { AuthUserProvider } from './src/contexts/AuthContext';
 import { Router } from './src/navigation/Router';
 
 const config: INativebaseConfig = {
@@ -15,9 +15,9 @@ const config: INativebaseConfig = {
 export default function App() {
   return (
     <NativeBaseProvider config={config}>
-      <AuthProvider>
+      <AuthUserProvider>
         <Router />
-      </AuthProvider>
+      </AuthUserProvider>
       <StatusBar style='auto' />
     </NativeBaseProvider>
   );

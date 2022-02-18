@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator<StackParamList>();
 
 export const StackNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={{ presentation: 'transparentModal', headerShown: false }}>
+    <Stack.Navigator screenOptions={{ presentation: 'modal', headerShown: false }}>
       <Stack.Screen name='Tabs' component={BottomNavigator} />
       <Stack.Screen name='FullModal' component={ModalScreen} />
     </Stack.Navigator>

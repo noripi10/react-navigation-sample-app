@@ -1,11 +1,20 @@
 import { useCallback } from 'react';
 import { Alert } from 'react-native';
 
-import { auth, db } from '../libs/firebase';
+// v8 or v0 compat
+// import firebase, { auth, db } from '../libs/firebase';
 
-// v9
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { collection, getDocs, Timestamp, doc, setDoc } from 'firebase/firestore';
+import { firebaseApp } from '../libs/firebase';
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithCredential,
+  signOut,
+  FacebookAuthProvider,
+  GoogleAuthProvider,
+} from 'firebase/auth';
+import { getFirestore, collection, query, getDocs, Timestamp, addDoc } from 'firebase/firestore';
 
 export interface User {
   id: string;
@@ -15,6 +24,9 @@ export interface User {
 }
 
 export const useFirebase = () => {
+  const auth = getAuth(firebaseApp);
+  const db = getFirestore(firebaseApp);
+
   const loginWithEmailPassword = useCallback(async (email: string, password: string) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -33,8 +45,6 @@ export const useFirebase = () => {
       //     var errorCode = error.code;
       //     var errorMessage = error.message;
       //   });
-
-      return true;
     } catch (e) {
       if (e instanceof Error) {
         Alert.alert(e.message);
@@ -46,35 +56,37 @@ export const useFirebase = () => {
     }
   }, []);
 
+  const loginFacebook = async () => {
+    const credential = FacebookAuthProvider.credential('');
+    await signInWithCredential(auth, credential);
+  };
+
+  const loginGoogle = async () => {
+    const credential = GoogleAuthProvider.credential('', '');
+    await signInWithCredential(auth, credential);
+  };
+
   const logout = useCallback(async () => {
     await auth.signOut();
   }, []);
 
   const getUsersCollection = useCallback(async () => {
     // const usersRef = collection(db, 'users');
-    console.log('getting users');
-    try {
-      const querySnapshot = await getDocs(collection(db, 'users'));
-      // console.log({ querySnapshot });
+    const _query = query(collection(db, 'users'));
+    const querySnapshot = await getDocs(_query);
 
-      const users = querySnapshot.docs.map((doc) => {
-        return { ...doc.data(), id: doc.id } as User;
-      });
+    const users = querySnapshot.docs.map((doc) => {
+      return { ...doc.data(), id: doc.id } as User;
+    });
 
-      console.log({ users, length: users.length });
-      return users;
-    } catch (error) {
-      console.warn(error);
-      return null;
-    }
+    return users;
   }, []);
 
   const setRoom = useCallback(async () => {
-    console.log('set rooms');
-
-    // const roomsRef = db.collection('users').doc();
-    // await roomsRef.set({ name: 'hoge' });
+    const roomsRef = collection(db, 'rooms');
+    const roomRef = await addDoc(roomsRef, { name: 'huge' });
+    console.log(roomRef);
   }, []);
 
-  return { loginWithEmailPassword, logout, getUsersCollection, setRoom };
+  return { auth, db, loginWithEmailPassword, logout, getUsersCollection, setRoom };
 };

@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useState, useEffect } from 'react';
 import { Box, Button, Center, Divider, Input, ScrollView, Text, VStack } from 'native-base';
 import { useFirebase } from '../hooks/useFirebase';
 import Storage from '@react-native-async-storage/async-storage';
@@ -9,6 +9,16 @@ export const LoginScreen: React.FC<Props> = ({}) => {
   const [userId, setUserID] = useState('');
   const [password, setPassword] = useState('');
   const { loginWithEmailPassword } = useFirebase();
+
+  useEffect(() => {
+    Storage.getItem('user').then((str) => {
+      if (str) {
+        const user = JSON.parse(str);
+        setUserID(user.userId);
+        setPassword(user.password);
+      }
+    });
+  }, []);
 
   const onLogin = useCallback(async () => {
     const result = await loginWithEmailPassword(userId, password);
@@ -49,9 +59,15 @@ export const LoginScreen: React.FC<Props> = ({}) => {
             <Input width={'70%'} maxWidth={400} my={1} p={3} value={userId} onChangeText={(t) => setUserID(t)} />
             <Text>password</Text>
             <Input width={'70%'} maxWidth={400} my={1} p={3} value={password} onChangeText={(t) => setPassword(t)} />
-            <Divider my={2} />
-            <Button onPress={onLogin}>login</Button>
           </Center>
+
+          <Divider my={3} width={'90%'} />
+
+          <Box alignItems={'center'}>
+            <Button width='80%' maxWidth={500} onPress={onLogin} borderRadius={999} py={3}>
+              login
+            </Button>
+          </Box>
         </ScrollView>
       </VStack>
     </Box>

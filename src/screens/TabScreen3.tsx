@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Center, Text } from 'native-base';
+import { Box, Center, Heading, Text } from 'native-base';
 
 type Props = {};
 
@@ -16,7 +16,7 @@ export const TabScreen3: React.FC<Props> = ({}) => {
       }}
     >
       <Center flex={1}>
-        <Text>TabScreen3</Text>
+        <Heading>TabScreen3</Heading>
       </Center>
     </Box>
   );
