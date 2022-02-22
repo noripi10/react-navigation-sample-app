@@ -45,7 +45,7 @@ export const TabScreen4: React.FC<Props> = ({}) => {
                 Set Room
               </Button>
 
-              <Button ml='1' onPress={logout}>
+              <Button ml='1' onPress={onLogout}>
                 Logout
               </Button>
             </HStack>

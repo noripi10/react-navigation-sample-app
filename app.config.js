@@ -12,6 +12,8 @@ export default () => {
         appId: process.env.FIREBAE_CONFIG_APP_ID,
         measurementId: process.env.FIREBAE_CONFIG_MEASUREMENT_ID,
       },
+      googleWebClientId: process.env.GOOGLE_WEB_CLIENT_ID,
+      facebookAppId: process.env.FACEBOOK_APP_ID,
     },
   };
 

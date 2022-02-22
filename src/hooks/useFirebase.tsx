@@ -1,13 +1,8 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Alert } from 'react-native';
-
-// v8 or v0 compat
-// import firebase, { auth, db } from '../libs/firebase';
-
-import { firebaseApp } from '../libs/firebase';
+import * as WebBrowser from 'expo-web-browser';
 import {
   getAuth,
-  onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithCredential,
   signOut,
@@ -15,7 +10,16 @@ import {
   GoogleAuthProvider,
 } from 'firebase/auth';
 import { getFirestore, collection, query, getDocs, Timestamp, addDoc } from 'firebase/firestore';
+import * as Google from 'expo-auth-session/providers/google';
+import * as Facebook from 'expo-auth-session/providers/facebook';
+import { ResponseType } from 'expo-auth-session';
+import Constants from 'expo-constants';
 
+import { firebaseApp } from '../libs/firebase';
+
+console.info('extra', Constants.manifest.extra);
+
+WebBrowser.maybeCompleteAuthSession();
 export interface User {
   id: string;
   name?: string;
@@ -23,9 +27,21 @@ export interface User {
   updateDate?: Timestamp;
 }
 
+export type UseFirebase = ReturnType<typeof useFirebase>;
+
 export const useFirebase = () => {
   const auth = getAuth(firebaseApp);
   const db = getFirestore(firebaseApp);
+
+  const [requestGoogle, responseGoogle, promptGoogleAsync] = Google.useAuthRequest({
+    responseType: ResponseType.IdToken,
+    expoClientId: Constants.manifest.extra.googleWebClientId ?? '',
+  });
+
+  const [requestFacebook, responseFaceBook, promptFacabookAync] = Facebook.useAuthRequest({
+    responseType: ResponseType.Token,
+    clientId: Constants.manifest.extra.faceBookAppId ?? '',
+  });
 
   const loginWithEmailPassword = useCallback(async (email: string, password: string) => {
     try {
@@ -56,22 +72,19 @@ export const useFirebase = () => {
     }
   }, []);
 
-  const loginFacebook = async () => {
-    const credential = FacebookAuthProvider.credential('');
-    await signInWithCredential(auth, credential);
+  const loginFacebook = () => {
+    promptFacabookAync();
   };
 
-  const loginGoogle = async () => {
-    const credential = GoogleAuthProvider.credential('', '');
-    await signInWithCredential(auth, credential);
+  const loginGoogle = () => {
+    promptGoogleAsync();
   };
 
   const logout = useCallback(async () => {
-    await auth.signOut();
+    await signOut(auth);
   }, []);
 
   const getUsersCollection = useCallback(async () => {
-    // const usersRef = collection(db, 'users');
     const _query = query(collection(db, 'users'));
     const querySnapshot = await getDocs(_query);
 
@@ -84,9 +97,50 @@ export const useFirebase = () => {
 
   const setRoom = useCallback(async () => {
     const roomsRef = collection(db, 'rooms');
-    const roomRef = await addDoc(roomsRef, { name: 'huge' });
+    const roomRef = await addDoc(roomsRef, { name: auth.currentUser.displayName });
     console.log(roomRef);
   }, []);
 
-  return { auth, db, loginWithEmailPassword, logout, getUsersCollection, setRoom };
+  useEffect(() => {
+    if (!!responseFaceBook) {
+      if (responseFaceBook.type === 'success') {
+        console.log(responseFaceBook.params);
+        const accessToken = responseFaceBook.params['access_token'];
+        const credential = FacebookAuthProvider.credential(accessToken);
+        signInWithCredential(auth, credential);
+      }
+      if (responseFaceBook.type === 'error') {
+        console.error(responseFaceBook.error);
+        Alert.alert('ログインに失敗しました。');
+      }
+    }
+  }, [responseFaceBook]);
+
+  useEffect(() => {
+    if (!!responseGoogle) {
+      if (responseGoogle.type === 'success') {
+        console.log(responseGoogle.params);
+        const token = responseGoogle.params['id_token'];
+        const credential = GoogleAuthProvider.credential(token);
+        signInWithCredential(auth, credential);
+      }
+      if (responseGoogle.type === 'error') {
+        console.error(responseGoogle.error);
+        Alert.alert('ログインに失敗しました。');
+      }
+    }
+  }, [responseGoogle]);
+
+  return {
+    auth,
+    db,
+    loginWithEmailPassword,
+    logout,
+    getUsersCollection,
+    setRoom,
+    loginFacebook,
+    loginGoogle,
+    requestFacebook,
+    requestGoogle,
+  };
 };

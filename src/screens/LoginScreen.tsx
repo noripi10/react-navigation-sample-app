@@ -8,7 +8,7 @@ type Props = {};
 export const LoginScreen: React.FC<Props> = ({}) => {
   const [userId, setUserID] = useState('');
   const [password, setPassword] = useState('');
-  const { loginWithEmailPassword } = useFirebase();
+  const { loginWithEmailPassword, loginGoogle, loginFacebook } = useFirebase();
 
   useEffect(() => {
     Storage.getItem('user').then((str) => {
@@ -61,11 +61,31 @@ export const LoginScreen: React.FC<Props> = ({}) => {
             <Input width={'70%'} maxWidth={400} my={1} p={3} value={password} onChangeText={(t) => setPassword(t)} />
           </Center>
 
-          <Divider my={3} width={'90%'} />
-
-          <Box alignItems={'center'}>
+          <Box pt={'2'} alignItems={'center'}>
             <Button width='80%' maxWidth={500} onPress={onLogin} borderRadius={999} py={3}>
               login
+            </Button>
+          </Box>
+
+          <Divider my={3} width={'90%'} />
+
+          <Box pt={'2'} alignItems='center'>
+            <Button width='80%' maxWidth={500} onPress={loginGoogle} borderRadius={999} py={3}>
+              google login
+            </Button>
+          </Box>
+          <Box pt={'2'} alignItems='center'>
+            <Button
+              width='80%'
+              maxWidth={500}
+              onPress={loginFacebook}
+              borderRadius={999}
+              py={3}
+              bgColor='teal.800'
+              shadow={'3'}
+              _pressed={{ style: { backgroundColor: 'red' } }}
+            >
+              facebook login
             </Button>
           </Box>
         </ScrollView>
