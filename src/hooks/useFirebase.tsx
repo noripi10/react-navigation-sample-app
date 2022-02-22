@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import {
   getAuth,
@@ -8,18 +8,25 @@ import {
   signOut,
   FacebookAuthProvider,
   GoogleAuthProvider,
+  TwitterAuthProvider,
 } from 'firebase/auth';
 import { getFirestore, collection, query, getDocs, Timestamp, addDoc } from 'firebase/firestore';
 import * as Google from 'expo-auth-session/providers/google';
 import * as Facebook from 'expo-auth-session/providers/facebook';
-import { ResponseType } from 'expo-auth-session';
+import { makeRedirectUri, ResponseType, useAuthRequest } from 'expo-auth-session';
 import Constants from 'expo-constants';
 
 import { firebaseApp } from '../libs/firebase';
 
-console.info('extra', Constants.manifest.extra);
+const useProxy = Platform.select({ web: false, default: true });
 
 WebBrowser.maybeCompleteAuthSession();
+
+const discovery = {
+  authorizationEndpoint: 'https://twitter.com/i/oauth2/authorize',
+  tokenEndpoint: 'https://twitter.com/i/oauth2/token',
+  revocationEndpoint: 'https://twitter.com/i/oauth2/revoke',
+};
 export interface User {
   id: string;
   name?: string;
@@ -42,6 +49,23 @@ export const useFirebase = () => {
     responseType: ResponseType.Token,
     clientId: Constants.manifest.extra.faceBookAppId ?? '',
   });
+
+  const redirectUri = makeRedirectUri({
+    scheme: Constants.manifest.scheme,
+    useProxy,
+  });
+  const [requestTwitter, responseTwitter, promptTwitterAsync] = useAuthRequest(
+    {
+      clientId: 'com.hiroapp.reactnavigationsampleapp',
+      redirectUri: makeRedirectUri({
+        scheme: 'com.hiroapp.reactnavigationsampleapp',
+        useProxy,
+      }),
+      usePKCE: true,
+      scopes: ['tweet.read'],
+    },
+    discovery
+  );
 
   const loginWithEmailPassword = useCallback(async (email: string, password: string) => {
     try {
@@ -78,6 +102,10 @@ export const useFirebase = () => {
 
   const loginGoogle = () => {
     promptGoogleAsync();
+  };
+
+  const loginTwitter = () => {
+    promptTwitterAsync();
   };
 
   const logout = useCallback(async () => {
@@ -131,6 +159,21 @@ export const useFirebase = () => {
     }
   }, [responseGoogle]);
 
+  useEffect(() => {
+    if (!!responseTwitter) {
+      if (responseTwitter.type === 'success') {
+        console.log(responseTwitter.params);
+        const code = responseTwitter.params['code'];
+        // const credential = TwitterAuthProvider.credential(code);
+        // signInWithCredential(auth, credential);
+      }
+      if (responseTwitter.type === 'error') {
+        console.error(responseTwitter.error);
+        Alert.alert('ログインに失敗しました。');
+      }
+    }
+  }, [responseTwitter]);
+
   return {
     auth,
     db,
@@ -140,7 +183,9 @@ export const useFirebase = () => {
     setRoom,
     loginFacebook,
     loginGoogle,
+    loginTwitter,
     requestFacebook,
     requestGoogle,
+    requestTwitter,
   };
 };

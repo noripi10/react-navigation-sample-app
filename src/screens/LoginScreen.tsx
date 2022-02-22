@@ -8,7 +8,7 @@ type Props = {};
 export const LoginScreen: React.FC<Props> = ({}) => {
   const [userId, setUserID] = useState('');
   const [password, setPassword] = useState('');
-  const { loginWithEmailPassword, loginGoogle, loginFacebook } = useFirebase();
+  const { loginWithEmailPassword, loginGoogle, loginFacebook, loginTwitter } = useFirebase();
 
   useEffect(() => {
     Storage.getItem('user').then((str) => {
@@ -67,7 +67,7 @@ export const LoginScreen: React.FC<Props> = ({}) => {
             </Button>
           </Box>
 
-          <Divider my={3} width={'90%'} />
+          <Divider my={3} width={'90%'} alignSelf='center' />
 
           <Box pt={'2'} alignItems='center'>
             <Button width='80%' maxWidth={500} onPress={loginGoogle} borderRadius={999} py={3}>
@@ -86,6 +86,21 @@ export const LoginScreen: React.FC<Props> = ({}) => {
               _pressed={{ style: { backgroundColor: 'red' } }}
             >
               facebook login
+            </Button>
+          </Box>
+
+          <Box pt={'2'} alignItems='center'>
+            <Button
+              width='80%'
+              maxWidth={500}
+              onPress={loginTwitter}
+              borderRadius={999}
+              py={3}
+              bgColor='teal.800'
+              shadow={'3'}
+              _pressed={{ style: { backgroundColor: 'blue' } }}
+            >
+              twitter login
             </Button>
           </Box>
         </ScrollView>

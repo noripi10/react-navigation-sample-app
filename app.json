@@ -16,7 +16,8 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hiroapp.reactnavigationsampleapp"
     },
     "android": {
       "adaptiveIcon": {
